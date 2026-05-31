@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="篮球计分">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" href="icon.png">
+    <title>ABA 篮球计分牌</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 20px;
+        }
+
+        #scoreboard-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        #top-row {
+            display: flex;
+            width: 100%;
+            height: 80px;
+        }
+
+        .top-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 44px;
+            font-weight: 500;
+            background-color: #5b72b5;
+            border: 1px solid #ffffff;
+            box-sizing: border-box;
+        }
+
+        #quarter-box {
+            background-color: #5b72b5;
+        }
+        #timer-box {
+            background-color: #5b72b5;
+        }
+
+        #mid-row {
+            display: flex;
+            width: 100%;
+            height: 120px;
+        }
+
+        .team-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: 500;
+            border: 1px solid #ffffff;
+            box-sizing: border-box;
+        }
+
+        #team1-box {
+            background-color: #ff0000;
+        }
+        #team2-box {
+            background-color: #00bfff;
+        }
+
+        #pause-row {
+            display: flex;
+            width: 100%;
+            height: 40px;
+            margin-top: -2px;
+            margin-bottom: 0px;
+        }
+
+        .pause-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            color: black;
+            background-color: white;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            box-sizing: border-box;
+        }
+
+        #bottom-row {
+            display: flex;
+            width: 50%;
+            height: 90px;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        .score-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 60px;
+            font-weight: 500;
+            background-color: white;
+            border: 1px solid black;
+            box-sizing: border-box;
+        }
+
+        #control-panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .control-row:last-child {
+            border-bottom: none;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        button {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #5b72b5;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        button.reset-btn {
+            background-color: #e74c3c;
+        }
+        button.score-btn {
+            background-color: #27ae60;
+            padding: 5px 10px;
+        }
+        button.score-btn.neg {
+            background-color: #c0392b;
+        }
+        button.pause-btn {
+            background-color: #f39c12;
+        }
+        button.pause-btn.add {
+            background-color: #2ecc71;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="color"] {
+            width: 30px;
+            height: 30px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .spacer {
+            flex: 1;
+        }
+
+        [contenteditable="true"] {
+            cursor: text;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="scoreboard-container">
+        <div id="top-row">
+            <div id="quarter-box" class="top-box" contenteditable="true">Q1</div>
+            <div id="timer-box" class="top-box">12:00</div>
+        </div>
+
+        <div id="mid-row">
+            <div id="team1-box" class="team-box" contenteditable="true">浙江阿勒克斯</div>
+            <div id="team2-box" class="team-box" contenteditable="true">宁夏太平</div>
+        </div>
+
+        <div id="pause-row">
+            <div id="team1-pause" class="pause-box">- - - - -</div>
+            <div id="team2-pause" class="pause-box">- - - - -</div>
+        </div>
+
+        <div id="bottom-row">
+            <div id="score1-box" class="score-box" contenteditable="true">0</div>
+            <div id="score2-box" class="score-box" contenteditable="true">0</div>
+        </div>
+    </div>
+
+    <div id="control-panel">
+        <div class="control-row">
+            <div class="control-group">
+                <label>计时器控制：</label>
+                <button id="timer-start-pause">开始</button>
+                <button id="timer-reset" class="reset-btn">重置</button>
+            </div>
+        </div>
+
+        <div class="control-row">
+            <div class="control-group">
+                <label>左边暂停：</label>
+                <button id="left-use-pause" class="pause-btn">用暂停</button>
+                <button id="left-add-pause" class="pause-btn add">加回暂停</button>
+            </div>
+            <div class="control-group">
+                <label>右边暂停：</label>
+                <button id="right-use-pause" class="pause-btn">用暂停</button>
+                <button id="right-add-pause" class="pause-btn add">加回暂停</button>
+            </div>
+        </div>
+
+        <div class="control-row">
+            <div class="control-group">
+                <label>左队 (红区):</label>
+                <input type="color" id="color-team1" value="#ff0000">
+                <button id="add-score1" class="score-btn">+1</button>
+                <button id="sub-score1" class="score-btn neg">-1</button>
+            </div>
+
+            <div class="control-group">
+                <label>右队 (蓝区):</label>
+                <input type="color" id="color-team2" value="#00bfff">
+                <button id="add-score2" class="score-btn">+1</button>
+                <button id="sub-score2" class="score-btn neg">-1</button>
+            </div>
+        </div>
+
+        <div class="control-row">
+            <div class="control-group">
+                <label>顶部色块 (Q1):</label>
+                <input type="color" id="color-top-box" value="#5b72b5">
+            </div>
+            <div class="control-group">
+                <label>底部比分框底色:</label>
+                <input type="color" id="color-bottom-box" value="#ffffff">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 计时器逻辑（倒计时 12:00）
+        let timeLeft = 720;
+        let timerRunning = false;
+        let timerInterval = null;
+        const timerDisplay = document.getElementById('timer-box');
+        const timerBtn = document.getElementById('timer-start-pause');
+        const timerResetBtn = document.getElementById('timer-reset');
+
+        function updateTimerDisplay() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        function startPauseTimer() {
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                timerBtn.textContent = "继续";
+                timerBtn.style.backgroundColor = "#27ae60";
+            } else {
+                if (timeLeft <= 0) return;
+                timerRunning = true;
+                timerBtn.textContent = "暂停";
+                timerBtn.style.backgroundColor = "#e67e22";
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timerRunning = false;
+                        timerBtn.textContent = "开始";
+                        timerBtn.style.backgroundColor = "#5b72b5";
+                        timeLeft = 0;
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timeLeft = 720;
+            timerBtn.textContent = "开始";
+            timerBtn.style.backgroundColor = "#5b72b5";
+            updateTimerDisplay();
+        }
+
+        timerBtn.addEventListener('click', startPauseTimer);
+        timerResetBtn.addEventListener('click', resetTimer);
+
+        // 暂停逻辑
+        let leftPauses = 5;
+        let rightPauses = 5;
+        const pauseLeftEl = document.getElementById('team1-pause');
+        const pauseRightEl = document.getElementById('team2-pause');
+
+        function updatePauseDisplay() {
+            pauseLeftEl.textContent = Array(leftPauses).fill('-').join(' ');
+            pauseRightEl.textContent = Array(rightPauses).fill('-').join(' ');
+        }
+
+        document.getElementById('left-use-pause').addEventListener('click', function() {
+            if (leftPauses > 0) { leftPauses--; updatePauseDisplay(); }
+        });
+        document.getElementById('left-add-pause').addEventListener('click', function() {
+            if (leftPauses < 5) { leftPauses++; updatePauseDisplay(); }
+        });
+        document.getElementById('right-use-pause').addEventListener('click', function() {
+            if (rightPauses > 0) { rightPauses--; updatePauseDisplay(); }
+        });
+        document.getElementById('right-add-pause').addEventListener('click', function() {
+            if (rightPauses < 5) { rightPauses++; updatePauseDisplay(); }
+        });
+
+        // 颜色调整
+        document.getElementById('color-team1').addEventListener('input', function(e) {
+            document.getElementById('team1-box').style.backgroundColor = e.target.value;
+        });
+        document.getElementById('color-team2').addEventListener('input', function(e) {
+            document.getElementById('team2-box').style.backgroundColor = e.target.value;
+        });
+        document.getElementById('color-top-box').addEventListener('input', function(e) {
+            document.getElementById('quarter-box').style.backgroundColor = e.target.value;
+            document.getElementById('timer-box').style.backgroundColor = e.target.value;
+        });
+        document.getElementById('color-bottom-box').addEventListener('input', function(e) {
+            document.getElementById('score1-box').style.backgroundColor = e.target.value;
+            document.getElementById('score2-box').style.backgroundColor = e.target.value;
+        });
+
+        // 比分加减
+        function getScore(elementId) {
+            let val = parseInt(document.getElementById(elementId).textContent);
+            return isNaN(val) ? 0 : val;
+        }
+        function setScore(elementId, value) {
+            document.getElementById(elementId).textContent = value;
+        }
+
+        document.getElementById('add-score1').addEventListener('click', function() {
+            setScore('score1-box', getScore('score1-box') + 1);
+        });
+        document.getElementById('sub-score1').addEventListener('click', function() {
+            let s = getScore('score1-box');
+            if (s > 0) setScore('score1-box', s - 1);
+        });
+        document.getElementById('add-score2').addEventListener('click', function() {
+            setScore('score2-box', getScore('score2-box') + 1);
+        });
+        document.getElementById('sub-score2').addEventListener('click', function() {
+            let s = getScore('score2-box');
+            if (s > 0) setScore('score2-box', s - 1);
+        });
+
+        // 初始化
+        updateTimerDisplay();
+        updatePauseDisplay();
+    </script>
+</body>
+</html>
