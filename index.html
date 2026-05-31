@@ -361,12 +361,18 @@
             if (rightPauses < 5) { rightPauses++; updatePauseDisplay(); }
         });
 
-        // 颜色调整
+        // 颜色调整（含自动字体颜色切换）
         document.getElementById('color-team1').addEventListener('input', function(e) {
-            document.getElementById('team1-box').style.backgroundColor = e.target.value;
+            const bgColor = e.target.value;
+            const teamBox = document.getElementById('team1-box');
+            teamBox.style.backgroundColor = bgColor;
+            teamBox.style.color = bgColor.toLowerCase() === '#ffffff' ? 'black' : 'white';
         });
         document.getElementById('color-team2').addEventListener('input', function(e) {
-            document.getElementById('team2-box').style.backgroundColor = e.target.value;
+            const bgColor = e.target.value;
+            const teamBox = document.getElementById('team2-box');
+            teamBox.style.backgroundColor = bgColor;
+            teamBox.style.color = bgColor.toLowerCase() === '#ffffff' ? 'black' : 'white';
         });
         document.getElementById('color-top-box').addEventListener('input', function(e) {
             document.getElementById('quarter-box').style.backgroundColor = e.target.value;
